@@ -6,14 +6,16 @@
 #define GAME_OF_LIFE_CELL_H
 
 #include <vector>
+#include <random>
+#include <ctime>
 
 class Cell {
 private:
     bool m_isAlive;
-    void checkAndChangeState(std::vector<int> neighbours);
 public:
     Cell();
-    const bool getState() const;
+    void checkAndChangeState(const std::vector<int> neighbours);
+    const int getState() const;
 
 };
 

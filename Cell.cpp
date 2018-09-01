@@ -6,7 +6,7 @@
 #include <ctime>
 #include "Cell.h"
 
-void Cell::checkAndChangeState(std::vector<int> neighbours) {
+void Cell::checkAndChangeState(const std::vector<int> neighbours) {
     int count{0};
 
     for(auto& x: neighbours)
@@ -25,12 +25,12 @@ void Cell::checkAndChangeState(std::vector<int> neighbours) {
 
 }
 
-const bool Cell::getState() const {
-    return m_isAlive;
+const int Cell::getState() const {
+    return static_cast<int>(m_isAlive);
 }
 
 Cell::Cell() {
-    std::mt19937 generator(std::time(nullptr));
-    std::uniform_int_distribution<int>distribution(0,1);
-    m_isAlive = static_cast<bool>(distribution(generator));
+
+    m_isAlive = (std::rand() % (1 - 0 + 1)) + 0;
+
 }
