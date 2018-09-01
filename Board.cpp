@@ -44,12 +44,23 @@ void Board::updateBoardState() {
         for(auto j = 0; j < m_Board[0].size(); j++)
         {
             std::vector<int> neighbours;
-            if( 0!=i && 0 !=j ) {
+            if( 0!=i || 0 !=j) {
+                if (i != m_Board.size() && j != m_Board[1].size()) {
                 neighbours = {m_Board[i - 1][j]->getState(), m_Board[i + 1][j]->getState(),
-                                            m_Board[i][j - 1]->getState(), m_Board[i][j + 1]->getState(),
-                                            m_Board[i - 1][j - 1]->getState(), m_Board[i - 1][j + 1]->getState(),
-                                            m_Board[i + 1][j - 1]->getState(), m_Board[i + 1][j + 1]->getState()};
+                              m_Board[i][j - 1]->getState(), m_Board[i][j + 1]->getState(),
+                              m_Board[i - 1][j - 1]->getState(), m_Board[i - 1][j + 1]->getState(),
+                              m_Board[i + 1][j - 1]->getState(), m_Board[i + 1][j + 1]->getState()};
+                }
             }
+            else if(i != m_Board.size() && j != m_Board[1].size())
+            {
+                neighbours = {m_Board[i - 1][j]->getState(), m_Board[i + 1][j]->getState(),
+                              m_Board[i][j - 1]->getState(), m_Board[i][j + 1]->getState(),
+                              m_Board[i - 1][j - 1]->getState(), m_Board[i - 1][j + 1]->getState(),
+                              m_Board[i + 1][j - 1]->getState(), m_Board[i + 1][j + 1]->getState()};
+
+            }
+
 
             m_Board[i][j]->checkAndChangeState(neighbours);
         }
