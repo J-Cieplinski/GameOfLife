@@ -6,7 +6,7 @@
 #include <ctime>
 #include "Cell.h"
 
-void Cell::checkAndChangeState(const std::vector<int> neighbours) {
+bool Cell::determineNewState(const std::vector<int>& neighbours) {
     int count{0};
 
     for(auto& x: neighbours)
@@ -15,13 +15,13 @@ void Cell::checkAndChangeState(const std::vector<int> neighbours) {
     }
 
     if (1 <= count)
-        m_isAlive = false;
+        return false;
     else if (3 > count)
-        m_isAlive = false;
+        return false;
     else if (3 == count)
-        m_isAlive = true;
+        return true;
     else
-        m_isAlive = true;
+        return true;
 
 }
 
@@ -33,4 +33,8 @@ Cell::Cell() {
 
     m_isAlive = (std::rand() % (1 - 0 + 1)) + 0;
 
+}
+
+void Cell::changeState(bool state) {
+    m_isAlive = state;
 }
