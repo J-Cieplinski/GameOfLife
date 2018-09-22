@@ -41,7 +41,7 @@ void Board::displayBoard() {
 
 void Board::updateBoardState() {
 
-    std::vector<std::vector<std::unique_ptr<Cell>>> tempBoard;
+    std::vector<std::vector<std::shared_ptr<Cell>>> tempBoard;
     tempBoard.resize(m_Board.size());
     for(auto& x : tempBoard)
     {
@@ -51,11 +51,18 @@ void Board::updateBoardState() {
     {
         for(auto& y : x)
         {
-            y = std::make_unique<Cell>();
+            y = std::make_shared<Cell>();
         }
     }
 
+    sendNeighbourCellsStates(tempBoard);
 
+}
+
+void Board::sendNeighbourCellsStates(std::vector<std::vector<std::shared_ptr<Cell>>>& tempBoard)
+{
+
+    //TODO fix this pile of shit you call code
     for (auto i = 0; i < m_Board.size(); i++) {
         for (auto j = 0; j < m_Board[0].size(); j++) {
             std::vector<int> neighbours;
@@ -111,13 +118,15 @@ void Board::updateBoardState() {
 
             tempBoard[i][j]->changeState(m_Board[i][j]->determineNewState(neighbours));
         }
+
     }
 
     for (auto i = 0; i < m_Board.size(); i++) {
         for (auto j = 0; j < m_Board[0].size(); j++) {
 
-            m_Board[i][j] = std::move(tempBoard[i][j]);
+            *m_Board[i][j] = *tempBoard[i][j];
 
         }
     }
+
 }
