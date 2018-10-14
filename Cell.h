@@ -15,7 +15,7 @@ private:
 public:
     Cell();
     static bool determineNewState(const std::vector<int>& neighbours);
-    const int getState() const;
+    const bool getState() const;
     void changeState(bool state);
 
 };

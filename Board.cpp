@@ -55,7 +55,6 @@ void Board::updateBoardState() {
         }
     }
 
-
     calculateNewBoardState(tempBoard);
 
 }
@@ -70,7 +69,7 @@ void Board::calculateNewBoardState(std::vector<std::vector<std::shared_ptr<Cell>
         for(auto width = 0; width < m_Board[0].size(); width++)
         {
             // First most cases
-                    if(0 < height && 0 < width)
+                    if(0 < height && 0 < width && 9 > width && 9 > height)
                     {
                         neighbours.resize(8);
 
@@ -101,7 +100,7 @@ void Board::calculateNewBoardState(std::vector<std::vector<std::shared_ptr<Cell>
                     neighbours.clear();
                 }
                 //Upper right corner
-                if(width == m_Board[0].size())
+                if(width == m_Board[0].size()-1)
                 {
                     neighbours.resize(3);
 
@@ -112,7 +111,7 @@ void Board::calculateNewBoardState(std::vector<std::vector<std::shared_ptr<Cell>
                 }
             }
             //Last row
-            if(height == m_Board.size())
+            if(height == m_Board.size()-1)
             {
                 //Lower left corner
                 if(width == 0)
@@ -125,7 +124,7 @@ void Board::calculateNewBoardState(std::vector<std::vector<std::shared_ptr<Cell>
                     neighbours.clear();
                 }
                 //Lower right corner
-                if(width == 0)
+                if(width == m_Board[0].size()-1)
                 {
                     neighbours.resize(3);
 
@@ -136,10 +135,88 @@ void Board::calculateNewBoardState(std::vector<std::vector<std::shared_ptr<Cell>
                 }
             }
 
+            // upper border
+            if(height == 0)
+            {
+                if(width > 0 && width < m_Board[0].size()-1)
+                {
+                    neighbours.resize(5);
 
+                    for(auto i = 0; i <= 1; i++)
+                    {
+                        for(auto j = -1; j <= 1; j++)
+                        {
+                            neighbours.push_back(m_Board[height+i][width+j]->getState());
+                        }
+                    }
+                    tempBoard[height][width]->changeState(Cell::determineNewState(neighbours));
+                    neighbours.clear();
+                }
+            }
 
+            //lower border
+            if(height == m_Board.size()-1)
+            {
+                if(width > 0 && width < m_Board[0].size()-1)
+                {
+                    neighbours.resize(5);
+                    for(auto i = -1; i <= 0; i++)
+                    {
+                        for(auto j = -1; j <= 1; j++)
+                        {
+                            neighbours.push_back(m_Board[height+i][width+j]->getState());
+                        }
+                    }
+                    tempBoard[height][width]->changeState(Cell::determineNewState(neighbours));
+                    neighbours.clear();
+                }
+            }
+
+            //left border
+            if(width == 0)
+            {
+                if(height > 0 && height < m_Board.size()-1)
+                {
+                    neighbours.resize(5);
+                    for(auto i = -1; i <= 1; i++)
+                    {
+                        for(auto j = 0; j <= 1; j++)
+                        {
+                            neighbours.push_back(m_Board[height+i][width+j]->getState());
+                        }
+                    }
+                    tempBoard[height][width]->changeState(Cell::determineNewState(neighbours));
+                    neighbours.clear();
+                }
+            }
+
+            //right border
+            if(width == m_Board[0].size()-1)
+            {
+                if(height > 0 && height < m_Board.size()-1)
+                {
+                    neighbours.resize(5);
+                    for(auto i = -1; i <= 1; i++)
+                    {
+                        for(auto j = -1; j <= 0; j++)
+                        {
+                            neighbours.push_back(m_Board[height+i][width+j]->getState());
+                        }
+                    }
+                    tempBoard[height][width]->changeState(Cell::determineNewState(neighbours));
+                    neighbours.clear();
+                }
+            }
         }
     }
+
+    for(auto height = 0; height < m_Board.size(); height++) {
+        for (auto width = 0; width < m_Board[0].size(); width++) {
+
+            *m_Board[height][width] = std::move(*tempBoard[height][width]);
+        }
+    }
+
 
 
 }

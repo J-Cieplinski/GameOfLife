@@ -6,7 +6,7 @@
 #include <ctime>
 #include "Cell.h"
 
-static bool Cell::determineNewState(const std::vector<int>& neighbours) {
+bool Cell::determineNewState(const std::vector<int>& neighbours) {
     int count{0};
 
     for(auto& x: neighbours)
@@ -14,9 +14,9 @@ static bool Cell::determineNewState(const std::vector<int>& neighbours) {
         count += x;
     }
 
-    if (1 <= count)
+    if (1 >= count)
         return false;
-    else if (3 > count)
+    else if (3 < count)
         return false;
     else if (3 == count)
         return true;
@@ -25,8 +25,8 @@ static bool Cell::determineNewState(const std::vector<int>& neighbours) {
 
 }
 
-const int Cell::getState() const {
-    return static_cast<int>(m_isAlive);
+const bool Cell::getState() const {
+    return m_isAlive;
 }
 
 Cell::Cell() {

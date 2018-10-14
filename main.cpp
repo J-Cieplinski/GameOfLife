@@ -9,8 +9,7 @@ int main() {
     board.displayBoard();
 
 
-    while(1)
-    {
+    while(1) {
         board.updateBoardState();
         board.displayBoard();
     }
