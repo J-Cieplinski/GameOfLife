@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include "Board.h"
+#include <iso646.h>
 
 Board::Board(int width, int height, bool isAlive) {
 
@@ -213,7 +214,7 @@ void Board::calculateNewBoardState(std::vector<std::vector<std::shared_ptr<Cell>
     for(auto height = 0; height < m_Board.size(); height++) {
         for (auto width = 0; width < m_Board[0].size(); width++) {
 
-            *m_Board[height][width] = std::move(*tempBoard[height][width]);
+            *m_Board[height][width] = *tempBoard[height][width];
         }
     }
 
