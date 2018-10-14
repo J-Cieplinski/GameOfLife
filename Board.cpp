@@ -55,78 +55,91 @@ void Board::updateBoardState() {
         }
     }
 
-    sendNeighbourCellsStates(tempBoard);
+
+    calculateNewBoardState(tempBoard);
 
 }
 
-void Board::sendNeighbourCellsStates(std::vector<std::vector<std::shared_ptr<Cell>>>& tempBoard)
+void Board::calculateNewBoardState(std::vector<std::vector<std::shared_ptr<Cell>>> &tempBoard)
 {
 
-    //TODO fix this pile of shit you call code
-    for (auto i = 0; i < m_Board.size(); i++) {
-        for (auto j = 0; j < m_Board[0].size(); j++) {
-            std::vector<int> neighbours;
+    std::vector<int> neighbours{};
 
-            if (i == 0) {
-                if (j == 0) {
-                    neighbours.resize(3);
-                    neighbours = {m_Board[i][j + 1]->getState(), m_Board[i + 1][j]->getState(),
-                                  m_Board[i + 1][j + 1]->getState()};
-                } else if (j == (m_Board[0].size() - 1)) {
-                    neighbours.resize(3);
-                    neighbours = {m_Board[i + 1][j - 1]->getState(), m_Board[i][j - 1]->getState(),
-                                  m_Board[i + 1][j]->getState()};
-                } else {
-                    neighbours.resize(5);
-                    neighbours = {m_Board[i + 1][j]->getState(), m_Board[i + 1][j + 1]->getState(),
-                                  m_Board[i + 1][j - 1]->getState(), m_Board[i][j + 1]->getState(),
-                                  m_Board[i][j - 1]->getState()};
-                }
-            }
-            else if(i == (m_Board.size() - 1))
+    for(auto height = 0; height < m_Board.size(); height++)
+    {
+        for(auto width = 0; width < m_Board[0].size(); width++)
+        {
+            // First most cases
+                    if(0 < height && 0 < width)
+                    {
+                        neighbours.resize(8);
+
+                        for(auto i = -1; i <= 1; i++)
+                        {
+                            for(auto j = -1; j <= 1; j++)
+                            {
+                                if(not (0 == j and 0 == i)) // don't pass the cell itself to check
+                                {
+                                    neighbours.push_back(m_Board[height+i][width+j]->getState()); // get all cells around
+                                }
+                            }
+                        }
+                        tempBoard[height][width]->changeState(Cell::determineNewState(neighbours));
+                        neighbours.clear();
+                    }
+            //First row
+            if(height == 0)
             {
-                if(j == 0)
+                // Upper left corner
+                if(width == 0)
                 {
                     neighbours.resize(3);
-                    neighbours = {m_Board[i][j + 1]->getState(), m_Board[i - 1][j]->getState(),
-                                  m_Board[i - 1][j + 1]->getState()};
+
+                    neighbours = {m_Board[height + 1][width + 1]->getState(), m_Board[height + 1][width]->getState(),
+                                  m_Board[height][width + 1]->getState()};
+                    tempBoard[height][width]->changeState(Cell::determineNewState(neighbours));
+                    neighbours.clear();
                 }
-                else if(j == (m_Board[0].size() - 1))
+                //Upper right corner
+                if(width == m_Board[0].size())
                 {
                     neighbours.resize(3);
-                    neighbours = {m_Board[i][j - 1]->getState(), m_Board[i - 1][j]->getState(),
-                                  m_Board[i - 1][j - 1]->getState()};
-                }
-                else
-                {
-                    neighbours.resize(5);
-                    neighbours = {m_Board[i - 1][j]->getState(), m_Board[i - 1][j - 1]->getState(),
-                                  m_Board[i][j - 1]->getState(), m_Board[i - 1][j + 1]->getState(),
-                                  m_Board[i][j + 1]->getState()};
+
+                    neighbours = {m_Board[height + 1][width - 1]->getState(), m_Board[height + 1][width]->getState(),
+                                  m_Board[height][width - 1]->getState()};
+                    tempBoard[height][width]->changeState(Cell::determineNewState(neighbours));
+                    neighbours.clear();
                 }
             }
-            else
+            //Last row
+            if(height == m_Board.size())
             {
+                //Lower left corner
+                if(width == 0)
+                {
+                    neighbours.resize(3);
 
-                neighbours.resize(8);
-                neighbours = {m_Board[i - 1][j]->getState(), m_Board[i + 1][j]->getState(),
-                              m_Board[i][j - 1]->getState(), m_Board[i][j + 1]->getState(),
-                              m_Board[i - 1][j - 1]->getState(), m_Board[i - 1][j + 1]->getState(),
-                              m_Board[i + 1][j - 1]->getState(), m_Board[i + 1][j + 1]->getState()};
+                    neighbours = {m_Board[height - 1][width + 1]->getState(), m_Board[height - 1][width]->getState(),
+                                  m_Board[height][width + 1]->getState()};
+                    tempBoard[height][width]->changeState(Cell::determineNewState(neighbours));
+                    neighbours.clear();
+                }
+                //Lower right corner
+                if(width == 0)
+                {
+                    neighbours.resize(3);
+
+                    neighbours = {m_Board[height - 1][width - 1]->getState(), m_Board[height - 1][width]->getState(),
+                                  m_Board[height][width - 1]->getState()};
+                    tempBoard[height][width]->changeState(Cell::determineNewState(neighbours));
+                    neighbours.clear();
+                }
             }
 
 
-            tempBoard[i][j]->changeState(m_Board[i][j]->determineNewState(neighbours));
+
         }
-
     }
 
-    for (auto i = 0; i < m_Board.size(); i++) {
-        for (auto j = 0; j < m_Board[0].size(); j++) {
-
-            *m_Board[i][j] = *tempBoard[i][j];
-
-        }
-    }
 
 }

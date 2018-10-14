@@ -14,7 +14,7 @@ private:
     bool m_isAlive;
 public:
     Cell();
-    bool determineNewState(const std::vector<int>& neighbours);
+    static bool determineNewState(const std::vector<int>& neighbours);
     const int getState() const;
     void changeState(bool state);
 

@@ -6,7 +6,7 @@
 #include <ctime>
 #include "Cell.h"
 
-bool Cell::determineNewState(const std::vector<int>& neighbours) {
+static bool Cell::determineNewState(const std::vector<int>& neighbours) {
     int count{0};
 
     for(auto& x: neighbours)
