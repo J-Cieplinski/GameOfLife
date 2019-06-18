@@ -5,7 +5,7 @@
 
 int main() {
     std::srand(std::time(nullptr));
-	Board board1(20,20);
+	Board board1(30,30);
 	board1.displayBoard();
 
 	int temp{ 10 };

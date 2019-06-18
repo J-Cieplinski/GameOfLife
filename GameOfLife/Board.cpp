@@ -9,9 +9,10 @@
 #include <chrono>
 #include <thread>
 
+
 Board::Board(int width, int height, bool isAlive) {
 
-    m_Board.resize(height);
+	m_Board.resize(height);
 
     for(auto& x : m_Board)
     {
@@ -32,17 +33,31 @@ void Board::displayBoard() {
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));	
 	system("cls");
 
+
 	std::ostream board(std::cout.rdbuf());
+	board << "\x1b[45m";
 
     for(auto i = 0; i < m_Board.size(); i++)
     {
         for(auto j = 0; j < m_Board[0].size(); j++)
         {
-            board << (m_Board[i][j])->getState();
+			auto temp = m_Board[i][j]->getState();
+			if (temp)
+			{
+				board << "\x1b[33m";
+				board << m_map[temp];
+			}
+			else
+			{
+				board << "\x1b[30m";
+				board << m_map[temp];
+			}
 			board << ' ';
+
         }
         board << std::endl;
     }
+	board << "\x1b[37m";
 
 }
 
