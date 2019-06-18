@@ -16,16 +16,9 @@ Board::Board(int width, int height, bool isAlive) {
     for(auto& x : m_Board)
     {
         x.resize(width);
+		for (auto& y : x)
+			y = std::make_unique<Cell>();	
     }
-
-    for(auto& x : m_Board)
-    {
-        for(auto& y : x)
-        {
-            y = std::make_unique<Cell>();
-        }
-    }
-
 }
 
 
@@ -55,7 +48,7 @@ void Board::displayBoard() {
 
 void Board::updateBoardState() {
 
-    std::vector<std::vector<std::shared_ptr<Cell>>> tempBoard;
+    std::vector<std::vector<std::unique_ptr<Cell>>> tempBoard;
     tempBoard.resize(m_Board.size());
     for(auto& x : tempBoard)
     {
@@ -65,7 +58,7 @@ void Board::updateBoardState() {
     {
         for(auto& y : x)
         {
-            y = std::make_shared<Cell>();
+            y = std::make_unique<Cell>();
         }
     }
 
@@ -82,26 +75,17 @@ void Board::loadBoardState(std::string boardLocation)
 	int height{ 0 };
 	int width{ 0 };
 
+	//get board dimensions and resize as needed
 	file >> height;
 	file >> width;
-
-{								//Create Board
-								//TODO messy, think of something else later
 	m_Board.resize(height);
 
-		for (auto& x : m_Board)
-		{
-			x.resize(width);
-		}
-
-		for (auto& x : m_Board)
-		{
-			for (auto& y : x)
-			{
-				y = std::make_unique<Cell>();
-			}
-		}
-}
+	for (auto& x : m_Board)
+	{
+		x.resize(width);
+		for (auto& y : x)
+			y = std::make_unique<Cell>();
+	}
 
 
 	while (file.is_open())
@@ -151,7 +135,7 @@ void Board::saveBoardState(std::string boardLocation)
 
 }
 
-void Board::calculateNewBoardState(std::vector<std::vector<std::shared_ptr<Cell>>> &tempBoard) // TODO rewrite needed, hacky
+void Board::calculateNewBoardState(std::vector<std::vector<std::unique_ptr<Cell>>> &tempBoard)
 {
 
     std::vector<int> neighbours{};
@@ -307,7 +291,7 @@ void Board::calculateNewBoardState(std::vector<std::vector<std::shared_ptr<Cell>
     for(auto height = 0; height < m_Board.size(); height++) {
         for (auto width = 0; width < m_Board[0].size(); width++) {
 
-            *m_Board[height][width] = *tempBoard[height][width];	//TODO change this to transfer ownership of a pointer
+            m_Board[height][width] = std::move(tempBoard[height][width]);
         }
     }
 
