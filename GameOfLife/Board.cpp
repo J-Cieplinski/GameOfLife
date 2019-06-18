@@ -125,17 +125,23 @@ void Board::saveBoardState(std::string boardLocation)
 {
 	std::fstream file;
 
-	file.open(boardLocation);
+	file.open(boardLocation, std::fstream::out);
 	
 	while(file.is_open())
 	{
 		file << m_Board.size();
+		file << " ";
 		file << m_Board[1].size();
+		file << std::endl;
 
 		for (auto& x : m_Board)
 		{
 			for (auto& y : x)
-				file << int(y->getState());
+			{
+				file << y->getState();
+				file << " ";
+			}
+			file << std::endl;
 		}
 
 		file.close();
@@ -145,7 +151,7 @@ void Board::saveBoardState(std::string boardLocation)
 
 }
 
-void Board::calculateNewBoardState(std::vector<std::vector<std::shared_ptr<Cell>>> &tempBoard) // TODO check if it can be done better
+void Board::calculateNewBoardState(std::vector<std::vector<std::shared_ptr<Cell>>> &tempBoard) // TODO rewrite needed, made for 10x10
 {
 
     std::vector<int> neighbours{};
