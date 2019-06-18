@@ -6,7 +6,8 @@
 #include <ctime>
 #include "Cell.h"
 
-bool Cell::determineNewState(const std::vector<int>& neighbours) {
+bool Cell::determineNewState(const std::vector<int>& neighbours, const bool state) // TODO too hacky?
+{
     int count{0};
 
     for(auto& x: neighbours)
@@ -14,14 +15,15 @@ bool Cell::determineNewState(const std::vector<int>& neighbours) {
         count += x;
     }
 
-    if (1 >= count)
-        return false;
-    else if (3 < count)
-        return false;
-    else if (3 == count)
-        return true;
-    else
-        return true;
+	if (2 > count)
+		return false;
+	else if (3 < count)
+		return false;
+	else if (3 == count)
+		return true;
+	else if (2 == count && state)
+		return true;
+    
 
 }
 
