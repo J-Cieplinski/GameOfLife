@@ -3,8 +3,11 @@
 //
 
 #include <iostream>
+#include <fstream>
 #include "Board.h"
 #include <iso646.h>
+#include <chrono>
+#include <thread>
 
 Board::Board(int width, int height, bool isAlive) {
 
@@ -26,16 +29,26 @@ Board::Board(int width, int height, bool isAlive) {
 }
 
 
+Board::Board(std::string fileLocation)
+{
+	loadBoardState(fileLocation);
+}
+
 void Board::displayBoard() {
 
+	std::this_thread::sleep_for(std::chrono::milliseconds(1000));	
+	system("cls");
+
+	std::ostream board(std::cout.rdbuf());
 
     for(auto i = 0; i < m_Board.size(); i++)
     {
         for(auto j = 0; j < m_Board[0].size(); j++)
         {
-            std::cout << (m_Board[i][j])->getState();
+            board << (m_Board[i][j])->getState();
+			board << ' ';
         }
-        std::cout << std::endl;
+        board << std::endl;
     }
 
 }
@@ -60,7 +73,79 @@ void Board::updateBoardState() {
 
 }
 
-void Board::calculateNewBoardState(std::vector<std::vector<std::shared_ptr<Cell>>> &tempBoard)
+void Board::loadBoardState(std::string boardLocation)
+{
+	std::ifstream file;
+	
+	file.open(boardLocation);
+	int temp{ 0 };
+	int height{ 0 };
+	int width{ 0 };
+
+	file >> height;
+	file >> width;
+
+{								//Create Board
+								//TODO messy, think of something else later
+	m_Board.resize(height);
+
+		for (auto& x : m_Board)
+		{
+			x.resize(width);
+		}
+
+		for (auto& x : m_Board)
+		{
+			for (auto& y : x)
+			{
+				y = std::make_unique<Cell>();
+			}
+		}
+}
+
+
+	while (file.is_open())
+	{
+		for (auto& x : m_Board)
+		{
+			for (auto& y : x)
+			{
+					file >> temp;
+					y->changeState(temp);
+			}
+		}
+
+		file.close();	
+
+	}
+
+}
+
+void Board::saveBoardState(std::string boardLocation)
+{
+	std::fstream file;
+
+	file.open(boardLocation);
+	
+	while(file.is_open())
+	{
+		file << m_Board.size();
+		file << m_Board[1].size();
+
+		for (auto& x : m_Board)
+		{
+			for (auto& y : x)
+				file << int(y->getState());
+		}
+
+		file.close();
+	}
+	
+	
+
+}
+
+void Board::calculateNewBoardState(std::vector<std::vector<std::shared_ptr<Cell>>> &tempBoard) // TODO check if it can be done better
 {
 
     std::vector<int> neighbours{};
@@ -214,7 +299,7 @@ void Board::calculateNewBoardState(std::vector<std::vector<std::shared_ptr<Cell>
     for(auto height = 0; height < m_Board.size(); height++) {
         for (auto width = 0; width < m_Board[0].size(); width++) {
 
-            *m_Board[height][width] = *tempBoard[height][width];
+            *m_Board[height][width] = *tempBoard[height][width];	//TODO change this to transfer ownership of a pointer
         }
     }
 
