@@ -16,7 +16,8 @@ constexpr auto colorBlack = "\x1b[30m";
 class Board {
 private:
     std::vector<std::vector<Cell>> board_;
-    void calculateNewBoardState(std::vector<std::vector<Cell>>& tempBoard);
+    std::vector<std::vector<Cell>> backBoard_;
+    void calculateNewBoardState();
 	void loadBoardState(std::string boardLocation);
     const std::map<bool, std::pair<char, std::string>> map_ = { {true, {'*', colorYellow}}, {false, {'#',colorBlack}} };
 
