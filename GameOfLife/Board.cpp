@@ -36,16 +36,13 @@ void Board::displayBoard() {
 
     bool cellState{};
 
-    for(auto i = 0; i < board_.size(); i++)
-    {
-        for(auto j = 0; j < board_[0].size(); j++)
-        {
-			cellState = board_[i][j].getState();
-            board << map_.at(cellState).second << map_.at(cellState).first << ' ';
-
-        }
-        board << '\n';
-    }
+	for(const auto& row : board_) {
+		for(const auto& column : row) {
+            cellState = column.getState();
+			board << map_.at(cellState).second << map_.at(cellState).first << ' ';
+		}
+		board << '\n';
+	}
 
 }
 
