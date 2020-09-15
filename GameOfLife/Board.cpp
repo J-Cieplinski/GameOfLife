@@ -34,13 +34,14 @@ void Board::displayBoard() {
     std::ostream board(std::cout.rdbuf());
 	board << colorMagenta;
 
+    bool cellState{};
 
     for(auto i = 0; i < board_.size(); i++)
     {
         for(auto j = 0; j < board_[0].size(); j++)
         {
-			auto temp = board_[i][j].getState();
-            board << map_.at(temp).second << map_.at(temp).first << ' ';
+			cellState = board_[i][j].getState();
+            board << map_.at(cellState).second << map_.at(cellState).first << ' ';
 
         }
         board << '\n';
