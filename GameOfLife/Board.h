@@ -15,15 +15,15 @@ constexpr auto colorBlack = "\x1b[30m";
 
 class Board {
 private:
-    std::vector<std::vector<std::unique_ptr<Cell>>> board_; //TODO replace pointer with regular Cell if determined to be feasible
-    void calculateNewBoardState(std::vector<std::vector<std::unique_ptr<Cell>>> &tempBoard);
+    std::vector<std::vector<Cell>> board_;
+    void calculateNewBoardState(std::vector<std::vector<Cell>>& tempBoard);
 	void loadBoardState(std::string boardLocation);
     const std::map<bool, std::pair<char, std::string>> map_ = { {true, {'*', colorYellow}}, {false, {'#',colorBlack}} };
 
 public:
     Board(int width, int height, bool isAlive = true);
-	Board(std::string fileLocation);
+	Board(const std::string& fileLocation);
     void displayBoard();
     void updateBoardState();
-	void saveBoardState(std::string boardLocation);
+	void saveBoardState(const std::string& boardLocation);
 };

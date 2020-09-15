@@ -27,11 +27,17 @@ bool Cell::getState() const {
 }
 
 Cell::Cell() {
-
-    isAlive_ = (std::rand() % (1 - 0 + 1)) + 0;
+	
+	
+    isAlive_ = Cell::distribution_(Cell::geEngine_);
 
 }
 
 void Cell::changeState(const bool state) {
     isAlive_ = state;
 }
+
+
+std::random_device Cell::randomDevice_;
+std::mt19937 Cell::geEngine_(Cell::randomDevice_());
+std::bernoulli_distribution Cell::distribution_(0.6);

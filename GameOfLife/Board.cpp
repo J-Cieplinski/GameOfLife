@@ -14,19 +14,11 @@ constexpr auto colorMagenta = "\x1b[45m";
 
 
 Board::Board(int width, int height, bool isAlive) {
-
-	board_.resize(height);
-
-    for(auto& x : board_)
-    {
-        x.resize(width);
-		for (auto& y : x)
-			y = std::make_unique<Cell>();	
-    }
+    board_.resize(height, std::vector<Cell>(width));
 }
 
 
-Board::Board(std::string fileLocation)
+Board::Board(const std::string& fileLocation)
 {
 	loadBoardState(fileLocation);
 }
@@ -46,7 +38,7 @@ void Board::displayBoard() {
     {
         for(auto j = 0; j < board_[0].size(); j++)
         {
-			auto temp = board_[i][j]->getState();
+			auto temp = board_[i][j].getState();
             board << map_.at(temp).second << map_.at(temp).first << ' ';
 
         }
@@ -57,19 +49,8 @@ void Board::displayBoard() {
 
 void Board::updateBoardState() {
 
-    std::vector<std::vector<std::unique_ptr<Cell>>> tempBoard;
+    std::vector<std::vector<Cell>> tempBoard(board_.size(), std::vector<Cell>(board_[0].size()));
     tempBoard.resize(board_.size());
-    for(auto& x : tempBoard)
-    {
-        x.resize(board_[0].size());
-    }
-    for(auto& x : tempBoard)
-    {
-        for(auto& y : x)
-        {
-            y = std::make_unique<Cell>();
-        }
-    }
 
     calculateNewBoardState(tempBoard);
 
@@ -87,14 +68,9 @@ void Board::loadBoardState(std::string boardLocation)
 	//get board dimensions and resize as needed
 	file >> height;
 	file >> width;
-	board_.resize(height);
 
-	for (auto& x : board_)
-	{
-		x.resize(width);
-		for (auto& y : x)
-			y = std::make_unique<Cell>();
-	}
+    board_.resize(height, std::vector<Cell>(width));
+	
 
 
 	while (file.is_open())
@@ -104,7 +80,7 @@ void Board::loadBoardState(std::string boardLocation)
 			for (auto& y : x)
 			{
 					file >> temp;
-					y->changeState(temp);
+					y.changeState(temp);
 			}
 		}
 
@@ -112,9 +88,9 @@ void Board::loadBoardState(std::string boardLocation)
 
 	}
 
-}
+} //TODO Fix Loading
 
-void Board::saveBoardState(std::string boardLocation)
+void Board::saveBoardState(const std::string& boardLocation)
 {
 	std::fstream file;
 
@@ -131,7 +107,7 @@ void Board::saveBoardState(std::string boardLocation)
 		{
 			for (auto& y : x)
 			{
-				file << y->getState();
+				file << y.getState();
 				file << " ";
 			}
 			file << std::endl;
@@ -144,7 +120,7 @@ void Board::saveBoardState(std::string boardLocation)
 
 }
 
-void Board::calculateNewBoardState(std::vector<std::vector<std::unique_ptr<Cell>>> &tempBoard)
+void Board::calculateNewBoardState(std::vector<std::vector<Cell>>& tempBoard)
 {
 
     std::vector<int> neighbours{};
@@ -153,8 +129,8 @@ void Board::calculateNewBoardState(std::vector<std::vector<std::unique_ptr<Cell>
     {
         for(auto width = 0; width < board_[0].size(); width++)
         {
-			auto currentCellState = board_[height][width]->getState();
-					// First most cases
+			auto currentCellState = board_[height][width].getState();
+			// First most cases
 			if(0 < width && 0 < height && board_.size()-1 > height && board_[1].size()-1 > width)
             {
 				neighbours.resize(8);
@@ -165,11 +141,11 @@ void Board::calculateNewBoardState(std::vector<std::vector<std::unique_ptr<Cell>
                     {
 						if(not (0 == j and 0 == i)) // don't pass the cell itself to check
                         {
-							neighbours.push_back(board_[height+i][width+j]->getState()); // get all cells around
+							neighbours.push_back(board_[height+i][width+j].getState()); // get all cells around
                         }
                     }
                  }
-				tempBoard[height][width]->changeState(Cell::determineNewState(neighbours, currentCellState));
+				tempBoard[height][width].changeState(Cell::determineNewState(neighbours, currentCellState));
                 neighbours.clear();
 			}
 
@@ -181,18 +157,18 @@ void Board::calculateNewBoardState(std::vector<std::vector<std::unique_ptr<Cell>
                 // Upper left corner
                 if(width == 0)
                 {
-                    neighbours = {board_[height + 1][width + 1]->getState(), board_[height + 1][width]->getState(),
-                                  board_[height][width + 1]->getState()};
-                    tempBoard[height][width]->changeState(Cell::determineNewState(neighbours, currentCellState));
+                    neighbours = {board_[height + 1][width + 1].getState(), board_[height + 1][width].getState(),
+                                  board_[height][width + 1].getState()};
+                    tempBoard[height][width].changeState(Cell::determineNewState(neighbours, currentCellState));
                     neighbours.clear();
                 }
 
                 //Upper right corner
                 if(width == board_[0].size()-1)
                 {
-                    neighbours = {board_[height + 1][width - 1]->getState(), board_[height + 1][width]->getState(),
-                                  board_[height][width - 1]->getState()};
-                    tempBoard[height][width]->changeState(Cell::determineNewState(neighbours, currentCellState));
+                    neighbours = {board_[height + 1][width - 1].getState(), board_[height + 1][width].getState(),
+                                  board_[height][width - 1].getState()};
+                    tempBoard[height][width].changeState(Cell::determineNewState(neighbours, currentCellState));
                     neighbours.clear();
                 }
             }
@@ -205,9 +181,9 @@ void Board::calculateNewBoardState(std::vector<std::vector<std::unique_ptr<Cell>
                 if(width == 0)
                 {
 
-                    neighbours = {board_[height - 1][width + 1]->getState(), board_[height - 1][width]->getState(),
-                                  board_[height][width + 1]->getState()};
-                    tempBoard[height][width]->changeState(Cell::determineNewState(neighbours, currentCellState));
+                    neighbours = {board_[height - 1][width + 1].getState(), board_[height - 1][width].getState(),
+                                  board_[height][width + 1].getState()};
+                    tempBoard[height][width].changeState(Cell::determineNewState(neighbours, currentCellState));
                     neighbours.clear();
                 }
 
@@ -215,9 +191,9 @@ void Board::calculateNewBoardState(std::vector<std::vector<std::unique_ptr<Cell>
                 if(width == board_[0].size()-1)
                 {
 
-                    neighbours = {board_[height - 1][width - 1]->getState(), board_[height - 1][width]->getState(),
-                                  board_[height][width - 1]->getState()};
-                    tempBoard[height][width]->changeState(Cell::determineNewState(neighbours, currentCellState));
+                    neighbours = {board_[height - 1][width - 1].getState(), board_[height - 1][width].getState(),
+                                  board_[height][width - 1].getState()};
+                    tempBoard[height][width].changeState(Cell::determineNewState(neighbours, currentCellState));
                     neighbours.clear();
                 }
             }
@@ -233,10 +209,10 @@ void Board::calculateNewBoardState(std::vector<std::vector<std::unique_ptr<Cell>
                     {
                         for(auto j = -1; j <= 1; j++)
                         {
-                            neighbours.push_back(board_[height+i][width+j]->getState());
+                            neighbours.push_back(board_[height+i][width+j].getState());
                         }
                     }
-                    tempBoard[height][width]->changeState(Cell::determineNewState(neighbours, currentCellState));
+                    tempBoard[height][width].changeState(Cell::determineNewState(neighbours, currentCellState));
                     neighbours.clear();
                 }
             }
@@ -251,10 +227,10 @@ void Board::calculateNewBoardState(std::vector<std::vector<std::unique_ptr<Cell>
                     {
                         for(auto j = -1; j <= 1; j++)
                         {
-                            neighbours.push_back(board_[height+i][width+j]->getState());
+                            neighbours.push_back(board_[height+i][width+j].getState());
                         }
                     }
-                    tempBoard[height][width]->changeState(Cell::determineNewState(neighbours, currentCellState));
+                    tempBoard[height][width].changeState(Cell::determineNewState(neighbours, currentCellState));
                     neighbours.clear();
                 }
             }
@@ -269,10 +245,10 @@ void Board::calculateNewBoardState(std::vector<std::vector<std::unique_ptr<Cell>
                     {
                         for(auto j = 0; j <= 1; j++)
                         {
-                            neighbours.push_back(board_[height+i][width+j]->getState());
+                            neighbours.push_back(board_[height+i][width+j].getState());
                         }
                     }
-                    tempBoard[height][width]->changeState(Cell::determineNewState(neighbours, currentCellState));
+                    tempBoard[height][width].changeState(Cell::determineNewState(neighbours, currentCellState));
                     neighbours.clear();
                 }
             }
@@ -287,23 +263,16 @@ void Board::calculateNewBoardState(std::vector<std::vector<std::unique_ptr<Cell>
                     {
                         for(auto j = -1; j <= 0; j++)
                         {
-                            neighbours.push_back(board_[height+i][width+j]->getState());
+                            neighbours.push_back(board_[height+i][width+j].getState());
                         }
                     }
-                    tempBoard[height][width]->changeState(Cell::determineNewState(neighbours, currentCellState));
+                    tempBoard[height][width].changeState(Cell::determineNewState(neighbours, currentCellState));
                     neighbours.clear();
                 }
             }
         }
     }
 
-    for(auto height = 0; height < board_.size(); height++) {
-        for (auto width = 0; width < board_[0].size(); width++) {
-
-            board_[height][width] = std::move(tempBoard[height][width]);
-        }
-    }
-
-
+    std::swap(board_, tempBoard);
 
 }

@@ -1,10 +1,8 @@
 #include <iostream>
 #include "Board.h"
-#include <random>
-#include <ctime>
 
 int main() {
-    std::srand(std::time(nullptr));
+	
 	
 	std::cout << "Do you want to start new Game of Life or load?\n";
 	std::cout << "1. Start New Game\n2. Load\nYour choice: ";
@@ -22,7 +20,7 @@ int main() {
 		std::cout << std::endl;
 		Board board(sizeX, sizeY);
 		
-		while (1)
+		while (true)
 		{
 			board.displayBoard();
 			board.updateBoardState();
@@ -35,7 +33,7 @@ int main() {
 		std::cin >> saveName;
 		Board board(saveName);
 
-		while (1)
+		while (true)
 		{
 			board.displayBoard();
 			board.updateBoardState();
