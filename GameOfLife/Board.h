@@ -1,22 +1,24 @@
 //
-// Created by spite on 8/14/18.
-//
+#pragma once
 
-#ifndef GAME_OF_LIFE_BOARD_H
-#define GAME_OF_LIFE_BOARD_H
-
-#include <memory>
-#include <vector>
-#include <string>
-#include "Cell.h"
 #include <map>
+#include <memory>
+#include <string>
+#include <vector>
+
+#include "Cell.h"
+
+constexpr auto colorYellow = "\x1b[33m";
+constexpr auto colorBlack = "\x1b[30m";
+
+
 
 class Board {
 private:
-    std::vector<std::vector<std::unique_ptr<Cell>>> m_Board;
+    std::vector<std::vector<std::unique_ptr<Cell>>> board_; //TODO replace pointer with regular Cell if determined to be feasible
     void calculateNewBoardState(std::vector<std::vector<std::unique_ptr<Cell>>> &tempBoard);
 	void loadBoardState(std::string boardLocation);
-	std::map<bool, char> m_map = { std::make_pair(true, '*'), std::make_pair(false, '#') };
+    const std::map<bool, std::pair<char, std::string>> map_ = { {true, {'*', colorYellow}}, {false, {'#',colorBlack}} };
 
 public:
     Board(int width, int height, bool isAlive = true);
@@ -25,8 +27,3 @@ public:
     void updateBoardState();
 	void saveBoardState(std::string boardLocation);
 };
-
-
-
-
-#endif //GAME_OF_LIFE_BOARD_H

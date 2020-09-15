@@ -1,16 +1,11 @@
-//
-// Created by spite on 8/14/18.
-//
-
 #include <random>
-#include <ctime>
 #include "Cell.h"
 
 bool Cell::determineNewState(const std::vector<int>& neighbours, const bool state) // TODO too hacky?
 {
-    int count{0};
+    auto count{0};
 
-    for(auto& x: neighbours)
+    for(const auto& x: neighbours)
     {
         count += x;
     }
@@ -27,16 +22,16 @@ bool Cell::determineNewState(const std::vector<int>& neighbours, const bool stat
 
 }
 
-const bool Cell::getState() const {
-    return m_isAlive;
+bool Cell::getState() const {
+    return isAlive_;
 }
 
 Cell::Cell() {
 
-    m_isAlive = (std::rand() % (1 - 0 + 1)) + 0;
+    isAlive_ = (std::rand() % (1 - 0 + 1)) + 0;
 
 }
 
-void Cell::changeState(bool state) {
-    m_isAlive = state;
+void Cell::changeState(const bool state) {
+    isAlive_ = state;
 }
