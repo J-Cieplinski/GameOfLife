@@ -6,12 +6,12 @@ int main() {
 	
 	std::cout << "Do you want to start new Game of Life or load?\n";
 	std::cout << "1. Start New Game\n2. Load\nYour choice: ";
-	int choice{ 0 };
+	auto choice{ 0 };
 	std::cin >> choice;
 
 	if (1 == choice)
 	{
-		int sizeX{ 0 }, sizeY{ 0 };
+		auto sizeX{ 0 }, sizeY{ 0 };
 
 		std::cout << std::endl << "Set width of your board: ";
 		std::cin >> sizeX;

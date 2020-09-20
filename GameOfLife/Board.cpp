@@ -5,7 +5,6 @@
 #include <iostream>
 #include <fstream>
 #include "Board.h"
-#include <iso646.h>
 #include <chrono>
 #include <thread>
 
@@ -246,8 +245,6 @@ void Board::calculateBoardCenter(const int width, const int height, const bool c
 
 void Board::calculateNewBoardState()
 {
-
-    std::vector<int> neighbours{};
 
     for(auto height = 0; height < board_.size(); height++)
     {

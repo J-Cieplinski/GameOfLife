@@ -1,8 +1,7 @@
 #include <random>
 #include "Cell.h"
 
-bool Cell::determineNewState(const std::vector<int>& neighbours, const bool state) // TODO too hacky?
-{
+bool Cell::determineNewState(const std::vector<int>& neighbours, const bool state) {
     auto count{0};
 
     for(const auto& x: neighbours)
@@ -18,8 +17,6 @@ bool Cell::determineNewState(const std::vector<int>& neighbours, const bool stat
 		return true;
 	else if (2 == count && state)
 		return true;
-    
-
 }
 
 bool Cell::getState() const {
@@ -27,10 +24,7 @@ bool Cell::getState() const {
 }
 
 Cell::Cell() {
-	
-	
     isAlive_ = Cell::distribution_(Cell::geEngine_);
-
 }
 
 void Cell::changeState(const bool state) {
@@ -40,4 +34,4 @@ void Cell::changeState(const bool state) {
 
 std::random_device Cell::randomDevice_;
 std::mt19937 Cell::geEngine_(Cell::randomDevice_());
-std::bernoulli_distribution Cell::distribution_(0.6);
+std::bernoulli_distribution Cell::distribution_(0.4);
