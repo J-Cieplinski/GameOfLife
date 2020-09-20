@@ -116,6 +116,134 @@ void Board::saveBoardState(const std::string& boardLocation)
 
 }
 
+void Board::calculateUpperLeftCorner(const int width, const int height, const bool currentCellState)
+{
+    if (width == 0) {
+    const std::vector<int> neighbours = { board_[height + 1][width + 1].getState(), board_[height + 1][width].getState(),
+									 board_[height][width + 1].getState() };
+    	
+        backBoard_[height][width].changeState(Cell::determineNewState(neighbours, currentCellState));
+    }
+}
+
+void Board::calculateUpperRightCorner(const int width, const int height, const bool currentCellState)
+{
+    if (width == board_[0].size() - 1) {
+    const std::vector<int> neighbours = { board_[height + 1][width - 1].getState(), board_[height + 1][width].getState(),
+										board_[height][width - 1].getState() };
+    	
+        backBoard_[height][width].changeState(Cell::determineNewState(neighbours, currentCellState));
+    }
+}
+
+void Board::calculateLowerLeftCorner(const int width, const int height, const bool currentCellState)
+{
+    if (width == 0) {
+
+        const std::vector<int> neighbours = { board_[height - 1][width + 1].getState(), board_[height - 1][width].getState(),
+                      board_[height][width + 1].getState() };
+        backBoard_[height][width].changeState(Cell::determineNewState(neighbours, currentCellState));
+    }
+}
+
+void Board::calculateLowerRightCorner(const int width, const int height, const bool currentCellState)
+{
+    if (width == board_[0].size() - 1) {
+
+        const std::vector<int> neighbours = { board_[height - 1][width - 1].getState(), board_[height - 1][width].getState(),
+                      board_[height][width - 1].getState() };
+        backBoard_[height][width].changeState(Cell::determineNewState(neighbours, currentCellState));
+    }
+}
+
+void Board::calculateUpperBorder(const int width, const int height, const bool currentCellState)
+{
+    if (width > 0 && width < board_[0].size() - 1)
+    {
+        std::vector<int> neighbours;
+
+        for (auto i = 0; i <= 1; i++)
+        {
+            for (auto j = -1; j <= 1; j++)
+            {
+                neighbours.push_back(board_[height + i][width + j].getState());
+            }
+        }
+        backBoard_[height][width].changeState(Cell::determineNewState(neighbours, currentCellState));
+    }
+}
+
+void Board::calculateLowerBorder(const int width, const int height, const bool currentCellState)
+{
+    if (width > 0 && width < board_[0].size() - 1)
+    {
+        std::vector<int> neighbours;
+
+        for (auto i = -1; i <= 0; i++)
+        {
+            for (auto j = -1; j <= 1; j++)
+            {
+                neighbours.push_back(board_[height + i][width + j].getState());
+            }
+        }
+        backBoard_[height][width].changeState(Cell::determineNewState(neighbours, currentCellState));
+    }
+}
+
+void Board::calculateLeftBorder(const int width, const int height, const bool currentCellState)
+{
+    if (height > 0 && height < board_.size() - 1)
+    {
+        std::vector<int> neighbours;
+        for (auto i = -1; i <= 1; i++)
+        {
+            for (auto j = 0; j <= 1; j++)
+            {
+                neighbours.push_back(board_[height + i][width + j].getState());
+            }
+        }
+        backBoard_[height][width].changeState(Cell::determineNewState(neighbours, currentCellState));
+    }
+}
+
+void Board::calculateRightBorder(const int width, const int height, const bool currentCellState)
+{
+    if (height > 0 && height < board_.size() - 1)
+    {
+        std::vector<int> neighbours;
+        for (auto i = -1; i <= 1; i++)
+        {
+            for (auto j = -1; j <= 0; j++)
+            {
+                neighbours.push_back(board_[height + i][width + j].getState());
+            }
+        }
+        backBoard_[height][width].changeState(Cell::determineNewState(neighbours, currentCellState));
+    }
+}
+
+void Board::calculateBoardCenter(const int width, const int height, const bool currentCellState)
+{
+    if (0 < width && 0 < height && board_.size() - 1 > height && board_[1].size() - 1 > width)
+    {
+        std::vector<int> neighbours;
+
+
+        for (auto i = -1; i <= 1; i++)
+        {
+            for (auto j = -1; j <= 1; j++)
+            {
+                if (!(0 == j && 0 == i)) // don't pass the cell itself to check
+                {
+                    neighbours.push_back(board_[height + i][width + j].getState()); // get all cells around
+                }
+            }
+        }
+        backBoard_[height][width].changeState(Cell::determineNewState(neighbours, currentCellState));
+        neighbours.clear();
+    }
+}
+
 void Board::calculateNewBoardState()
 {
 
@@ -126,145 +254,51 @@ void Board::calculateNewBoardState()
         for(auto width = 0; width < board_[0].size(); width++)
         {
 			auto currentCellState = board_[height][width].getState();
-			// First most cases
-			if(0 < width && 0 < height && board_.size()-1 > height && board_[1].size()-1 > width)
-            {
-				neighbours.resize(8);
-
-				for(auto i = -1; i <= 1; i++)
-                {
-					for(auto j = -1; j <= 1; j++)
-                    {
-						if(not (0 == j and 0 == i)) // don't pass the cell itself to check
-                        {
-							neighbours.push_back(board_[height+i][width+j].getState()); // get all cells around
-                        }
-                    }
-                 }
-				backBoard_[height][width].changeState(Cell::determineNewState(neighbours, currentCellState));
-                neighbours.clear();
-			}
+        	
+			// Board Center
+            calculateBoardCenter(width, height, currentCellState);
 
             //First row
             if(height == 0)
             {
-				neighbours.resize(3);
-
                 // Upper left corner
-                if(width == 0)
-                {
-                    neighbours = {board_[height + 1][width + 1].getState(), board_[height + 1][width].getState(),
-                                  board_[height][width + 1].getState()};
-                    backBoard_[height][width].changeState(Cell::determineNewState(neighbours, currentCellState));
-                    neighbours.clear();
-                }
+                calculateUpperLeftCorner(width, height, currentCellState);
 
                 //Upper right corner
-                if(width == board_[0].size()-1)
-                {
-                    neighbours = {board_[height + 1][width - 1].getState(), board_[height + 1][width].getState(),
-                                  board_[height][width - 1].getState()};
-                    backBoard_[height][width].changeState(Cell::determineNewState(neighbours, currentCellState));
-                    neighbours.clear();
-                }
+                calculateUpperRightCorner(width, height, currentCellState);
             }
             //Last row
             if(height == board_.size()-1)
             {
-				neighbours.resize(3);
-
-                //Lower left corner
-                if(width == 0)
-                {
-
-                    neighbours = {board_[height - 1][width + 1].getState(), board_[height - 1][width].getState(),
-                                  board_[height][width + 1].getState()};
-                    backBoard_[height][width].changeState(Cell::determineNewState(neighbours, currentCellState));
-                    neighbours.clear();
-                }
+            	//Lower left corner
+                calculateLowerLeftCorner(width, height, currentCellState);
 
                 //Lower right corner
-                if(width == board_[0].size()-1)
-                {
-
-                    neighbours = {board_[height - 1][width - 1].getState(), board_[height - 1][width].getState(),
-                                  board_[height][width - 1].getState()};
-                    backBoard_[height][width].changeState(Cell::determineNewState(neighbours, currentCellState));
-                    neighbours.clear();
-                }
+                calculateLowerRightCorner(width, height, currentCellState);
             }
 
             // upper border
             if(height == 0)
             {
-                if(width > 0 && width < board_[0].size()-1)
-                {
-                    neighbours.resize(5);
-
-                    for(auto i = 0; i <= 1; i++)
-                    {
-                        for(auto j = -1; j <= 1; j++)
-                        {
-                            neighbours.push_back(board_[height+i][width+j].getState());
-                        }
-                    }
-                    backBoard_[height][width].changeState(Cell::determineNewState(neighbours, currentCellState));
-                    neighbours.clear();
-                }
+                calculateUpperBorder(width, height, currentCellState);
             }
 
             //lower border
             if(height == board_.size()-1)
             {
-                if(width > 0 && width < board_[0].size()-1)
-                {
-                    neighbours.resize(5);
-                    for(auto i = -1; i <= 0; i++)
-                    {
-                        for(auto j = -1; j <= 1; j++)
-                        {
-                            neighbours.push_back(board_[height+i][width+j].getState());
-                        }
-                    }
-                    backBoard_[height][width].changeState(Cell::determineNewState(neighbours, currentCellState));
-                    neighbours.clear();
-                }
+                calculateLowerBorder(width, height, currentCellState);
             }
 
             //left border
             if(width == 0)
             {
-                if(height > 0 && height < board_.size()-1)
-                {
-                    neighbours.resize(5);
-                    for(auto i = -1; i <= 1; i++)
-                    {
-                        for(auto j = 0; j <= 1; j++)
-                        {
-                            neighbours.push_back(board_[height+i][width+j].getState());
-                        }
-                    }
-                    backBoard_[height][width].changeState(Cell::determineNewState(neighbours, currentCellState));
-                    neighbours.clear();
-                }
+                calculateLeftBorder(width, height, currentCellState);
             }
 
             //right border
             if(width == board_[0].size()-1)
             {
-                if(height > 0 && height < board_.size()-1)
-                {
-                    neighbours.resize(5);
-                    for(auto i = -1; i <= 1; i++)
-                    {
-                        for(auto j = -1; j <= 0; j++)
-                        {
-                            neighbours.push_back(board_[height+i][width+j].getState());
-                        }
-                    }
-                    backBoard_[height][width].changeState(Cell::determineNewState(neighbours, currentCellState));
-                    neighbours.clear();
-                }
+                calculateRightBorder(width, height, currentCellState);
             }
         }
     }
