@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Board.h"
 
+
 int main() {
 	
 	
@@ -19,7 +20,7 @@ int main() {
 		std::cin >> sizeY;
 		std::cout << std::endl;
 		Board board(sizeX, sizeY);
-		
+
 		while (true)
 		{
 			board.displayBoard();

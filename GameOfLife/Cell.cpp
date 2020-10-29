@@ -34,4 +34,4 @@ void Cell::changeState(const bool state) {
 
 std::random_device Cell::randomDevice_;
 std::mt19937 Cell::geEngine_(Cell::randomDevice_());
-std::bernoulli_distribution Cell::distribution_(0.4);
+std::bernoulli_distribution Cell::distribution_(0.25);

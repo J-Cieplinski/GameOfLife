@@ -1,12 +1,9 @@
-//
-// Created by spite on 8/14/18.
-//
-
 #include <iostream>
+#include <sstream>
 #include <fstream>
-#include "Board.h"
 #include <chrono>
 #include <thread>
+#include "Board.h"
 
 
 constexpr auto colorMagenta = "\x1b[45m";
@@ -25,12 +22,11 @@ Board::Board(const std::string& fileLocation)
 
 void Board::displayBoard() {
 
-	std::this_thread::sleep_for(std::chrono::milliseconds(500));
+   
+	std::this_thread::sleep_for(std::chrono::milliseconds(400));
 
 	system("cls");
-
-
-    std::ostream board(std::cout.rdbuf());
+    std::stringstream board;
 	board << colorMagenta;
 
     bool cellState{};
@@ -42,6 +38,7 @@ void Board::displayBoard() {
 		}
 		board << '\n';
 	}
+    std::cout << board.str();
 
 }
 
@@ -67,7 +64,6 @@ void Board::loadBoardState(std::string boardLocation)
     board_.resize(height, std::vector<Cell>(width));
 	
 
-
 	while (file.is_open())
 	{
 		for (auto& x : board_)
@@ -78,12 +74,12 @@ void Board::loadBoardState(std::string boardLocation)
 					y.changeState(temp);
 			}
 		}
-
 		file.close();	
-
 	}
 
-} //TODO Fix Loading
+    backBoard_ = board_;
+
+}
 
 void Board::saveBoardState(const std::string& boardLocation)
 {
